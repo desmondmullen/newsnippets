@@ -25,22 +25,25 @@ app.get("/scrape", (req, res) => {
         normalizeWhitespace: true,
       }
     });
+    console.log('starting');
     // Now, we grab every h2 within an article tag, and do the following:
     $("item").each((i, element) => {
       const result = {};
-
       result.title = $(element).children("title").text();
-      theLink = $(element).children("link").text();
-      result.link = theLink.substr(0, theLink.indexOf('?'));
+      result.link = $(element).children("guid").text();
       result.description = $(element).children("description").text();
-
-      db.Article.create(result)
+      db.Article.findOne({ link: result.link })
         .then(dbArticle => {
-          // console.log(dbArticle);
+          if (dbArticle === null) { // then create the new article
+            db.Article.create(result)
+              .then(dbArticle => {
+                // console.log('created');
+              })
+              .catch(err => {
+                console.log(err);
+              });
+          }
         })
-        .catch(err => {
-          console.log(err);
-        });
     });
     res.send("Scrape Complete");
   });
@@ -68,6 +71,8 @@ app.get("/articles/:id", (req, res) => {
 });
 
 app.post("/articles/:id", (req, res) => {
+  console.log('req.body below');
+  console.log(req.body);
   db.Note.create(req.body)
     .then(dbNote => {
       // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
