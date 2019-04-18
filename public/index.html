@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta charset="UTF-8">
+  <title>NewSNippets</title>
+  <style>
+    body {
+      background-color: cornflowerblue
+    }
+
+    #wrapper {
+      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+      padding-top: 5%;
+    }
+
+    #articles {
+      display: inline-block;
+      overflow: auto;
+      width: 65%;
+      /*height: 700px;*/
+    }
+
+    #notes {
+      float: right;
+      width: 35%;
+    }
+
+    textarea,
+    input {
+      display: block;
+      width: 100%;
+      background-color: #A5CC4B;
+    }
+
+    input {
+      height: 1em;
+      font-size: 2em;
+    }
+
+    textarea {
+      height: 10em;
+      font-size: 1.5em;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="wrapper">
+    <h1>NewSNippets</h1>
+    <div id="articles"></div>
+    <div id="notes"></div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
