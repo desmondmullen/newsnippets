@@ -8,14 +8,14 @@
         body {
             background-color: cornflowerblue
         }
-
+        
         #wrapper {
             width: 90%;
             margin-left: auto;
             margin-right: auto;
             padding-top: 5%;
         }
-
+        
         #articles {
             display: inline-block;
             overflow: auto;
@@ -23,36 +23,36 @@
             margin-right: 10%;
             /*height: 700px;*/
         }
-
+        
         #notes {
             float: right;
             width: 30%;
         }
-
+        
         textarea,
         input {
             display: block;
             width: 100%;
             background-color: #A5CC4B;
         }
-
+        
         input {
             height: 1em;
             font-size: 2em;
         }
-
+        
         textarea {
             height: 10em;
             font-size: 1.5em;
         }
-
+        
         .fetching {
             font-size: x-large;
             font-weight: bold;
             font-style: italic;
         }
-
         /* Customize the label (the container) */
+        
         .container {
             display: inline;
             position: relative;
@@ -65,8 +65,8 @@
             -ms-user-select: none;
             user-select: none;
         }
-
         /* Hide the browser's default radio button */
+        
         .container input {
             position: absolute;
             opacity: 0;
@@ -74,8 +74,8 @@
             height: 0;
             width: 0;
         }
-
         /* Create a custom radio button */
+        
         .checkmark {
             position: absolute;
             top: 0;
@@ -85,30 +85,30 @@
             background-color: #eee;
             border-radius: 50%;
         }
-
         /* On mouse-over, add a grey background color */
+        
         .container:hover input~.checkmark {
             background-color: #ccc;
         }
-
         /* When the radio button is checked, add a blue background */
+        
         .container input:checked~.checkmark {
             background-color: #FFA191;
         }
-
         /* Create the indicator (the dot/circle - hidden when not checked) */
+        
         .checkmark:after {
             content: '';
             position: absolute;
             display: none;
         }
-
         /* Show the indicator (dot/circle) when checked */
+        
         .container input:checked~.checkmark:after {
             display: block;
         }
-
         /* Style the indicator (dot/circle) */
+        
         .container .checkmark:after {
             top: 9px;
             left: 9px;
@@ -133,7 +133,10 @@
         </label>
         <h1>NewSNippets</h1>
         <div id='articles'></div>
-        <div id='notes'></div>
+        <div id='notes'>
+            <div id='noteentry'></div>
+            <div id='notelist'></div>
+        </div>
     </div>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
     <script src='app.js'></script>
