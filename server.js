@@ -80,10 +80,11 @@ app.get("/articles/saved", (req, res) => {
 });
 
 app.get("/articles/:id", (req, res) => {
-    db.Article.findOne({ _id: req.params.id })
-        .populate("note")
-        .then(dbArticle => {
-            res.json(dbArticle);
+    db.Note.find({ article: req.params.id })
+        // .populate("article")
+        .then(dbNote => {
+            console.log(dbNote);
+            res.json(dbNote);
         })
         .catch(err => {
             res.json(err);
@@ -102,19 +103,35 @@ app.post("/articles/:id", (req, res) => {
         req.body.article = req.params.id; //add the id of the article into the body
         db.Note.create(req.body)
             .then(dbNote => {
-                // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
-                // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
-                // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
-                return db.Article.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true });
+                return db.Note.find({ article: req.body.article }, { new: true });
             })
-            .then(dbArticle => {
-                res.json(dbArticle);
-            })
-            .catch(err => {
-                res.json(err);
-            });
     }
 });
+// app.post("/articles/:id", (req, res) => {
+//     console.log(req.body.saved);
+//     if (req.body.saved) {
+//         console.log('req.body.saved is true');
+//         db.Article.findOneAndUpdate({ _id: req.params.id }, { saved: true }, { new: true })
+//             .then(dbArticle => {
+//                 console.log(dbArticle);
+//             })
+//     } else {
+//         req.body.article = req.params.id; //add the id of the article into the body
+//         db.Note.create(req.body)
+//             .then(dbNote => {
+//                 // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
+//                 // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
+//                 // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
+//                 return db.Article.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true });
+//             })
+//             .then(dbArticle => {
+//                 res.json(dbArticle);
+//             })
+//             .catch(err => {
+//                 res.json(err);
+//             });
+//     }
+// });
 
 app.listen(PORT, () => {
     console.log(`App running on port ${PORT}!`);
