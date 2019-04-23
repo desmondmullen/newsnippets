@@ -100,7 +100,7 @@ app.get("/notes/:id", (req, res) => {
 
 app.post("/articles/:id", (req, res) => {
     if (req.body.saved) {
-        db.Article.findOneAndUpdate({ _id: req.params.id }, { saved: true }, { new: true })
+        db.Article.findOneAndUpdate({ _id: req.params.id }, { saved: req.body.saved }, { new: true })
             .then(dbArticle => {
                 console.log(dbArticle);
                 // need to update button to 'Saved'
