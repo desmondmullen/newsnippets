@@ -8,7 +8,11 @@ const NoteSchema = new Schema({
     article: {
         type: Schema.Types.ObjectId,
         ref: 'Article'
-    }
+    },
+    modified: {
+        type: Date,
+        default: Date.now()
+    },
 
 });
 

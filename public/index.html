@@ -6,14 +6,19 @@
     <title>NewSNippets</title>
     <style>
         body {
-            background-color: cornflowerblue
+            background-color: cornflowerblue;
+            font-size: large;
+        }
+        
+        button {
+            font-size: large;
         }
         
         #wrapper {
             width: 90%;
             margin-left: auto;
             margin-right: auto;
-            padding-top: 5%;
+            /* padding-top: 5%; */
         }
         
         #articles {
@@ -22,6 +27,10 @@
             width: 60%;
             margin-right: 10%;
             /*height: 700px;*/
+        }
+        
+        .article-title {
+            font-weight: bold;
         }
         
         #notes {
@@ -134,6 +143,7 @@
 
 <body>
     <div id='wrapper'>
+        <h1>NewSNippets - <em>New York Times</em></h1>
         <button id='scrapearticles'>Fetch New Articles</button> View:
         <label class='container'>All Articles
             <input id='allarticles' type='radio' checked='checked' name='radio'>
@@ -143,7 +153,7 @@
             <input id='savedarticles' type='radio' name='radio'>
             <span class='checkmark'></span>
         </label>
-        <h1>NewSNippets</h1>
+        <br><br>
         <div id='articles'></div>
         <div id='notes'>
             <div id='noteentry'></div>

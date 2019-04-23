@@ -24,7 +24,7 @@ function displayArticles(saved) {
             <input data-id='${data[i]._id}' id='saveoff' type='radio' ${isNotSaved} name='savearticle${data[i]._id}' class='saveoff${data[i]._id}'>
             <span class='checkmark'></span>
         </label>`;
-            $('#articles').append(`<p>${data[i].title} ${theSavedToggle}<button data-id='${data[i]._id}' data-title='${data[i].title}' id='displaynotes'>See/Add Note(s)</button><br /><a href='${data[i].link}' target='_blank'>${data[i].link}</a><br />${data[i].description}</p>`);
+            $('#articles').append(`<p><span class='article-title'>${data[i].title}</span><br />${data[i].description}<br /><a href='${data[i].link}' target='_blank'>${data[i].link}</a><br />${theSavedToggle}<button data-id='${data[i]._id}' data-title='${data[i].title}' id='displaynotes'>See/Add Note(s)</button></p><hr/>`);
         }
     });
 };

@@ -50,7 +50,7 @@ app.get('/scrape', (req, res) => {
 });
 
 app.get('/articles', (req, res) => {
-    db.Article.find({})
+    db.Article.find({}).sort({ fetched: -1 })
         .then(dbArticle => {
             res.json(dbArticle);
         })
@@ -62,7 +62,7 @@ app.get('/articles', (req, res) => {
 app.get('/articles/saved', (req, res) => {
     db.Article.find({
             saved: true
-        })
+        }).sort({ fetched: -1 })
         .then(dbArticle => {
             res.json(dbArticle);
         })
@@ -72,7 +72,7 @@ app.get('/articles/saved', (req, res) => {
 });
 
 app.get('/articles/:id', (req, res) => {
-    db.Note.find({ article: req.params.id })
+    db.Note.find({ article: req.params.id }).sort({ modified: -1 })
         .populate('article')
         .then(dbNote => {
             res.json(dbNote);
@@ -104,7 +104,7 @@ app.post('/articles/:id', (req, res) => {
         req.body.article = req.params.id; //adds the id of the article into the body
         db.Note.create(req.body)
             .then(dbNote => {
-                db.Note.find({ article: req.body.article }, { new: true })
+                db.Note.find({ article: req.body.article }, { new: true }).sort({ modified: -1 })
                     .then(notesList => {
                         res.json(notesList);
                     })

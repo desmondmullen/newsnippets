@@ -15,6 +15,10 @@ const ArticleSchema = new Schema({
         type: String,
         required: true
     },
+    fetched: {
+        type: Date,
+        default: Date.now()
+    },
     saved: {
         type: Boolean,
         default: false
