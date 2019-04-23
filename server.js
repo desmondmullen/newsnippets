@@ -1,37 +1,35 @@
-const express = require("express");
-const logger = require("morgan");
-const mongoose = require("mongoose");
-const axios = require("axios");
-const cheerio = require("cheerio");
+const express = require('express');
+const logger = require('morgan');
+const mongoose = require('mongoose');
+const axios = require('axios');
+const cheerio = require('cheerio');
 const PORT = 3000;
 
 const app = express();
-app.use(logger("dev"));
+app.use(logger('dev'));
 
-const db = require("./models");
+const db = require('./models');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static("public"));
+app.use(express.static('public'));
 
-var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/newsnippets";
+var MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost/newsnippets';
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
-app.get("/scrape", (req, res) => {
+app.get('/scrape', (req, res) => {
     const theArticles = [];
-    axios.get("http://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml").then(response => {
-        // Then, we load that into cheerio and save it to $ for a shorthand selector
+    axios.get('http://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml').then(response => {
         const $ = cheerio.load(response.data, {
             xml: {
                 normalizeWhitespace: true,
             }
         });
-        // Now, we grab every h2 within an article tag, and do the following:
-        $("item").each((i, element) => {
+        $('item').each((i, element) => {
             const result = {};
-            result.title = $(element).children("title").text();
-            result.link = $(element).children("guid").text();
-            result.description = $(element).children("description").text();
+            result.title = $(element).children('title').text();
+            result.link = $(element).children('guid').text();
+            result.description = $(element).children('description').text();
             db.Article.findOne({ link: result.link })
                 .then(dbArticle => {
                     if (dbArticle === null) { // then create the new article
@@ -48,12 +46,10 @@ app.get("/scrape", (req, res) => {
         setTimeout(function() {
             res.json(theArticles);
         }, 3000);
-
-        // res.send("Scrape Complete");
     });
 });
 
-app.get("/articles", (req, res) => {
+app.get('/articles', (req, res) => {
     db.Article.find({})
         .then(dbArticle => {
             res.json(dbArticle);
@@ -63,7 +59,7 @@ app.get("/articles", (req, res) => {
         });
 });
 
-app.get("/articles/saved", (req, res) => {
+app.get('/articles/saved', (req, res) => {
     db.Article.find({
             saved: true
         })
@@ -75,11 +71,10 @@ app.get("/articles/saved", (req, res) => {
         });
 });
 
-app.get("/articles/:id", (req, res) => {
+app.get('/articles/:id', (req, res) => {
     db.Note.find({ article: req.params.id })
-        .populate("article")
+        .populate('article')
         .then(dbNote => {
-            console.log('in get articles ' + dbNote);
             res.json(dbNote);
         })
         .catch(err => {
@@ -87,9 +82,9 @@ app.get("/articles/:id", (req, res) => {
         });
 });
 
-app.get("/notes/:id", (req, res) => {
+app.get('/notes/:id', (req, res) => {
     db.Note.find({ _id: req.params.id })
-        .populate("article")
+        .populate('article')
         .then(dbNote => {
             res.json(dbNote);
         })
@@ -98,16 +93,15 @@ app.get("/notes/:id", (req, res) => {
         });
 });
 
-app.post("/articles/:id", (req, res) => {
+app.post('/articles/:id', (req, res) => {
     if (req.body.saved) {
         db.Article.findOneAndUpdate({ _id: req.params.id }, { saved: req.body.saved }, { new: true })
             .then(dbArticle => {
                 console.log(dbArticle);
-                // need to update button to 'Saved'
             })
     } else { // save note
         console.log('saving note');
-        req.body.article = req.params.id; //add the id of the article into the body
+        req.body.article = req.params.id; //adds the id of the article into the body
         db.Note.create(req.body)
             .then(dbNote => {
                 db.Note.find({ article: req.body.article }, { new: true })
@@ -117,31 +111,8 @@ app.post("/articles/:id", (req, res) => {
             })
     }
 });
-// notes
-app.get("/find/:id", (req, res) => {
-    // When searching by an id, the id needs to be passed in
-    // as (mongojs.ObjectId(IdYouWantToFind))
 
-    // Find just one result in the notes collection
-    db.notes.findOne({
-            // Using the id in the url
-            _id: mongojs.ObjectId(req.params.id)
-        },
-        (error, found) => {
-            // log any errors
-            if (error) {
-                console.log(error);
-                res.send(error);
-            } else {
-                // Otherwise, send the note to the browser
-                // This will fire off the success function of the ajax request
-                res.send(found);
-            }
-        }
-    );
-});
-
-app.post("/update/:id", (req, res) => {
+app.post('/update/:id', (req, res) => {
     db.Note.update({
             _id: req.params.id
         }, {
@@ -163,20 +134,16 @@ app.post("/update/:id", (req, res) => {
     );
 });
 
-// Delete One from the DB
-app.get("/delete/:id", (req, res) => {
+app.get('/delete/:id', (req, res) => {
     // Remove a note using the objectID
     db.Note.remove({
             _id: req.params.id
         },
         (error, removed) => {
-            // Log any errors from mongojs
             if (error) {
                 console.log(error);
                 res.send(error);
             } else {
-                // Otherwise, send the mongojs response to the browser
-                // This will fire off the success function of the ajax request
                 res.send(removed);
             }
         }
