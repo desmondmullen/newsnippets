@@ -84,7 +84,7 @@ app.get('/articles/:id', (req, res) => { // finds notes by article id
 
 app.get('/find/:term', (req, res) => { // finds a note by note id
     //db.stores.find( { $text: { $search: "java coffee shop" } } )
-    db.Article.find({ title: { $regex: `.*${req.params.term}.*` } })
+    db.Article.find({ title: { $regex: `(?i).*${req.params.term}.*` } })
         .then(dbArticle => {
             res.json(dbArticle);
         })

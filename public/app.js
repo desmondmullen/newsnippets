@@ -66,13 +66,28 @@ $(document).on('click', '#savedarticles', function() {
 });
 
 $(document).on('click', '#search', function() {
-    $.ajax({
-            method: 'GET',
-            url: '/find/' + $('#searchinput').val()
-        })
-        .then(data => {
-            doTheDisplaying(data);
-        });
+    if ($('#searchinput').val() === '') {
+        displayArticles();
+    } else {
+        $.ajax({
+                method: 'GET',
+                url: '/find/' + $('#searchinput').val().trim()
+            })
+            .then(data => {
+                doTheDisplaying(data);
+            });
+    }
+});
+
+document.getElementById('searchinput').addEventListener('keyup', function(event) {
+    if (event.keyCode === 13) {
+        event.preventDefault();
+        if ($('#searchinput').val() === '') {
+            displayArticles();
+        } else {
+            document.getElementById('search').click();
+        }
+    }
 });
 
 $(document).on('click', '#displaynotes', function() {
