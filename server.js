@@ -97,10 +97,9 @@ app.post('/articles/:id', (req, res) => {
     if (req.body.saved) {
         db.Article.findOneAndUpdate({ _id: req.params.id }, { saved: req.body.saved }, { new: true })
             .then(dbArticle => {
-                console.log(dbArticle);
+                // console.log(dbArticle);
             })
     } else { // save note
-        console.log('saving note');
         req.body.article = req.params.id; //adds the id of the article into the body
         db.Note.create(req.body)
             .then(dbNote => {
