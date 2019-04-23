@@ -1,26 +1,29 @@
 function displayArticles(saved) {
-    $('#noteentry').empty();
-    $('#notelist').empty();
-    $('#articles').empty();
     let isSaved;
     let theUrl = '/articles';
     if (saved) { theUrl = '/articles/saved' };
-    if (1 === 2) { theUrl = '/find/' + 'Sri' };
     $.getJSON(theUrl, data => {
-        for (let i = 0; i < data.length; i++) {
-            if (data[i].saved) {
-                isSaved = `checked='checked'`;
-            } else {
-                isSaved = ``;
-            }
-            let theSavedToggle = `<section class='save-switch'>Save Article: 
+        doTheDisplaying(data);
+    });
+};
+
+function doTheDisplaying(data) {
+    $('#noteentry').empty();
+    $('#notelist').empty();
+    $('#articles').empty();
+    for (let i = 0; i < data.length; i++) {
+        if (data[i].saved) {
+            isSaved = `checked='checked'`;
+        } else {
+            isSaved = ``;
+        }
+        let theSavedToggle = `<section class='save-switch'>Save Article: 
         OFF <label class='switch'>On
             <input data-id='${data[i]._id}' type='checkbox' ${isSaved} name='savearticle${data[i]._id}' class='saveart saveart${data[i]._id}'>
             <span class='slider round'></span>
         </label> ON</section>`;
-            $('#articles').append(`<div class='article-display'><span class='article-title'>${data[i].title}</span><br />${data[i].description}<br /><a href='${data[i].link}' target='_blank'>${data[i].link}</a><div class='article-bar'>${theSavedToggle}<button data-id='${data[i]._id}' data-title='${data[i].title}' id='displaynotes'>See/Add Note(s)</button></div></div><br />`);
-        }
-    });
+        $('#articles').append(`<div class='article-display'><span class='article-title'>${data[i].title}</span><br />${data[i].description}<br /><a href='${data[i].link}' target='_blank'>${data[i].link}</a><div class='article-bar'>${theSavedToggle}<button data-id='${data[i]._id}' data-title='${data[i].title}' id='displaynotes'>See/Add Note(s)</button></div></div><br />`);
+    }
 };
 
 $(document).on('click', '#scrapearticles', function() {
@@ -64,22 +67,7 @@ $(document).on('click', '#search', function() {
             url: '/find/' + $('#searchinput').val()
         })
         .then(data => {
-            $('#noteentry').empty();
-            $('#notelist').empty();
-            $('#articles').empty();
-            for (let i = 0; i < data.length; i++) {
-                if (data[i].saved) {
-                    isSaved = `checked='checked'`;
-                } else {
-                    isSaved = ``;
-                }
-                let theSavedToggle = `<section class='save-switch'>Save Article: 
-        OFF <label class='switch'>On
-            <input data-id='${data[i]._id}' type='checkbox' ${isSaved} name='savearticle${data[i]._id}' class='saveart saveart${data[i]._id}'>
-            <span class='slider round'></span>
-        </label> ON</section>`;
-                $('#articles').append(`<div class='article-display'><span class='article-title'>${data[i].title}</span><br />${data[i].description}<br /><a href='${data[i].link}' target='_blank'>${data[i].link}</a><div class='article-bar'>${theSavedToggle}<button data-id='${data[i]._id}' data-title='${data[i].title}' id='displaynotes'>See/Add Note(s)</button></div></div><br />`);
-            }
+            doTheDisplaying(data);
         });
 });
 
