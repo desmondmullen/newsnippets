@@ -9,7 +9,9 @@ function displayArticles(saved) {
 
 function doTheDisplaying(data) {
     $('#noteentry').empty();
+    $('#notelisttitle').empty();
     $('#notelist').empty();
+    document.getElementById('notelist').setAttribute('style', 'padding: 0px');
     $('#articles').empty();
     for (let i = 0; i < data.length; i++) {
         if (data[i].saved) {
@@ -28,6 +30,8 @@ function doTheDisplaying(data) {
 
 $(document).on('click', '#scrapearticles', function() {
     $('#noteentry').empty();
+    $('#notelisttitle').empty();
+    document.getElementById('notelist').setAttribute('style', 'padding: 0px');
     $('#notelist').empty();
     let stillFetching = true;
     document.getElementById('articles').classList.add('fetching');
@@ -79,20 +83,25 @@ $(document).on('click', '#displaynotes', function() {
 
 function displayNotes(thisId, thisTitle) {
     $('#noteentry').empty();
+    $('#notelisttitle').empty();
+
     $('#notelist').empty();
     $('#titleinput').val('');
     $('#bodyinput').val('');
-    $('#noteentry').append(`<h2>Notes for: <em>${thisTitle}</em></h2>`);
-    $('#noteentry').append(`<input id='titleinput' name='title' placeholder='New note title...'>`);
-    $('#noteentry').append(`<textarea id='bodyinput' name='body' placeholder='New note body...'></textarea>`);
-    $('#noteentry').append(`<button data-id='${thisId}' data-title='${thisTitle}' id='savenote'>Save Note</button>`);
+    $('#noteentry').append(`<div class='notesfor'>Create a note for:</div> <em>${thisTitle}</em>`);
+    $('#noteentry').append(`<input id='titleinput' name='title' placeholder='Note title...'>`);
+    $('#noteentry').append(`<textarea id='bodyinput' name='body' placeholder='Note body...'></textarea>`);
+    $('#noteentry').append(`<section class='align-right'><button data-id='${thisId}' data-title='${thisTitle}' id='savenote'>Save Note</button></section><br>`);
     $.ajax({
             method: 'GET',
             url: '/articles/' + thisId
         })
         .then(data => {
+            $('#notelisttitle').html(`<div class='savednotes'>Saved Notes for this article:</div>(Click title to view or edit. Click X to delete.)`);
+            $('#notelist').append(`<strong>Title <span class='deleteheader'>Delete<span></strong>`);
+            document.getElementById('notelist').setAttribute('style', 'padding: 10px');
             for (let i = 0; i < data.length; i++) {
-                $('#notelist').prepend(`<p class='data-entry' data-id='${data[i]._id}'><span class='dataTitle' data-id='${data[i]._id}'>${data[i].title}</span><span class=delete>X</span></p>`);
+                $('#notelist').append(`<hr><p data-id='${data[i]._id}'><span class='dataTitle' data-id='${data[i]._id}'>${data[i].title}</span><span class=delete>X</span></p>`);
             }
         });
 };
@@ -130,20 +139,6 @@ $(document).on('click', '.saveart', function() {
             displayArticles();
         });
 });
-
-// $(document).on('click', '#saveoff', function() {
-//     const thisId = $(this).attr('data-id');
-//     $.ajax({
-//             method: 'POST',
-//             url: '/articles/' + thisId,
-//             data: {
-//                 saved: false
-//             }
-//         })
-//         .then(data => {
-//             displayArticles();
-//         });
-// });
 
 $(document).on('click', '.delete', function() {
     let selected = $(this).parent();

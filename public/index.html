@@ -8,11 +8,35 @@
         body {
             background-color: #94B9C9;
             font-size: large;
+            font-family: 'Rokkitt', serif;
         }
         
         button {
             font-size: large;
             margin: 10px;
+            font-family: 'Rokkitt', serif;
+        }
+        
+        .align-right {
+            text-align: right;
+            margin-right: -10px;
+        }
+        
+        .delete,
+        .deleteheader {
+            float: right;
+        }
+        
+        .delete {
+            margin-right: 20px;
+        }
+        
+        h1 {
+            font-family: 'IM Fell English SC', serif;
+            font-size: 3.5em;
+            padding: 0;
+            margin: 10px 0;
+            text-align: center;
         }
         
         .article-display {
@@ -42,10 +66,8 @@
         
         #articles {
             display: inline-block;
-            overflow: auto;
             width: 65%;
             margin-right: 5%;
-            /*height: 700px;*/
         }
         
         .article-title {
@@ -57,21 +79,26 @@
             width: 30%;
         }
         
+        #notelist {
+            background-color: #BDD1D8;
+        }
+        
         textarea,
         input {
             display: block;
             width: 100%;
             background-color: #BDD1D8;
+            font-family: 'Rokkitt', serif;
         }
         
         input {
             height: 1em;
-            font-size: 1.5em;
+            font-size: 1.3em;
         }
         
         textarea {
             height: 10em;
-            font-size: 1.3em;
+            font-size: 1.2em;
         }
         
         .fetching {
@@ -89,17 +116,24 @@
         
         .data-title {
             cursor: pointer;
-            font-size: 24px;
+            margin: 0;
         }
-        /* Customize the label (the container) */
+        
+        .savednotes,
+        .notesfor {
+            font-size: x-large;
+        }
+        
+        p {
+            margin: 0;
+        }
         
         .container {
             display: inline;
             position: relative;
-            padding-left: 35px;
-            margin-bottom: 12px;
+            padding-left: 25px;
+            padding-right: 10px;
             cursor: pointer;
-            font-size: 22px;
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
@@ -114,7 +148,6 @@
             height: 0;
             width: 0;
         }
-        /* Create a custom radio button */
         
         .checkmark {
             position: absolute;
@@ -125,29 +158,24 @@
             background-color: #eee;
             border-radius: 50%;
         }
-        /* On mouse-over, add a grey background color */
         
         .container:hover input~.checkmark {
             background-color: #ccc;
         }
-        /* When the radio button is checked, add a blue background */
         
         .container input:checked~.checkmark {
             background-color: #32CD32;
         }
-        /* Create the indicator (the dot/circle - hidden when not checked) */
         
         .checkmark:after {
             content: '';
             position: absolute;
             display: none;
         }
-        /* Show the indicator (dot/circle) when checked */
         
         .container input:checked~.checkmark:after {
             display: block;
         }
-        /* Style the indicator (dot/circle) */
         
         .container .checkmark:after {
             top: 6px;
@@ -157,16 +185,13 @@
             border-radius: 50%;
             background: white;
         }
-        /* Add a black background color to the top navigation bar */
         
         .topnav {
             overflow: hidden;
             background-color: #5F849E;
             width: 100%;
-            /* margin: 0; */
             padding: 0;
         }
-        /* Style the links inside the navigation bar */
         
         .topnav a {
             float: left;
@@ -175,31 +200,32 @@
             text-align: center;
             padding: 14px 16px;
             text-decoration: none;
-            /* font-size: 17px; */
         }
-        /* Change the color of links on hover */
         
         .topnav a:hover {
             background-color: #ddd;
             color: black;
         }
-        /* Style the 'active' element to highlight the current page */
         
         .topnav a.active {
             background-color: #2196F3;
             color: white;
         }
-        /* Style the search box inside the navigation bar */
         
         .topnav input[type=text] {
             float: right;
-            width: 50%;
+            width: 30%;
             padding: 6px;
             border: none;
             margin: 10px;
             font-size: large;
+            background-color: white;
         }
-        /* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
+        
+        #search {
+            float: right;
+            margin-left: 0;
+        }
         
         @media screen and (max-width: 600px) {
             .topnav a,
@@ -216,14 +242,9 @@
             }
         }
         
-        .searchinput {
-            background-color: white;
-        }
-        
         #displaynotes {
             float: right;
         }
-        /* The switch - the box around the slider */
         
         .switch {
             margin: 5px 0;
@@ -239,7 +260,6 @@
             width: 0;
             height: 0;
         }
-        /* The slider */
         
         .slider {
             position: absolute;
@@ -279,7 +299,6 @@
             -ms-transform: translateX(20px);
             transform: translateX(20px);
         }
-        /* Rounded sliders */
         
         .slider.round {
             border-radius: 34px;
@@ -289,12 +308,13 @@
             border-radius: 50%;
         }
     </style>
+    <link href="https://fonts.googleapis.com/css?family=IM+Fell+English+SC|Rokkitt" rel="stylesheet">
 </head>
 
 <body>
     <div class='topnav'>
-        <button id='scrapearticles'>Fetch New Articles</button> View:
-        <label class='container'>All Articles
+        <button id='scrapearticles'>Fetch New Articles</button> View Selection:&nbsp;
+        <label class='container'>All Articles 
             <input id='allarticles' type='radio' checked='checked' name='radio'>
             <span class='checkmark'></span>
         </label>
@@ -302,13 +322,14 @@
             <input id='savedarticles' type='radio' name='radio'>
             <span class='checkmark'></span>
         </label>
-        <input id='searchinput' class='searchinput' type='text' placeholder='Search..'> <button id='search'>Search</button>
+        <button id='search'>Search</button><input id='searchinput' class='searchinput' type='text' placeholder='Search..'>
     </div>
     <div id='wrapper'>
         <h1>NewSNippets - <em>New York Times</em></h1>
         <div id='articles'></div>
         <div id='notes'>
             <div id='noteentry'></div>
+            <div id='notelisttitle'></div>
             <div id='notelist'></div>
         </div>
     </div>
