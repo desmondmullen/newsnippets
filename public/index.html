@@ -6,13 +6,14 @@
     <title>NewSNippets</title>
     <link rel='stylesheet' type='text/css' href='/assets/css/style.css'>
     <link rel='icon' type='image/x-icon' href='/assets/images/news.ico' />
-    <link href='https://fonts.googleapis.com/css?family=IM+Fell+English+SC|Rokkitt' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=IM+Fell+English+SC' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Rokkitt' rel='stylesheet'>
 </head>
 
 <body>
     <div class='topnav'>
         <button id='scrapearticles'>Fetch New Articles</button> View Selection:&nbsp;
-        <label class='container'>All Articles 
+        <label class='container'>All Articles
             <input id='allarticles' type='radio' checked='checked' name='radio'>
             <span class='checkmark'></span>
         </label>
@@ -20,7 +21,8 @@
             <input id='savedarticles' type='radio' name='radio'>
             <span class='checkmark'></span>
         </label>
-        <button id='search'>Search</button><input id='searchinput' class='searchinput' type='text' placeholder='Search..'>
+        <button id='search'>Search</button><input id='searchinput' class='searchinput' type='text'
+            placeholder='Search..'>
     </div>
     <div id='wrapper'>
         <h1>NewSNippets - <em>New York Times</em></h1>
@@ -32,7 +34,9 @@
         </div>
     </div>
     <footer class='footer'>
-        <p>"NewSNippets" is an exercise in Express, MongoDB, Axios, and Cheerio. &copy; 2019 <a href='https://desmondmullen.com' target='_blank'>desmondmullen.com</a> &bull; <a href='https://github.com/desmondmullen/newsnippets' target='_blank'>GitHub Repository</a></p>
+        <p>"NewSNippets" is an exercise in Express, MongoDB, Axios, and Cheerio. &copy; 2019 <a
+                href='https://desmondmullen.com' target='_blank'>desmondmullen.com</a> &bull; <a
+                href='https://github.com/desmondmullen/newsnippets' target='_blank'>GitHub Repository</a></p>
     </footer>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
     <script src='app.js'></script>
