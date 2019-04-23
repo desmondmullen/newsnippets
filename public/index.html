@@ -5,6 +5,11 @@
     <meta charset='UTF-8'>
     <title>NewSNippets</title>
     <style>
+        html,
+        body {
+            margin: 0 0 15px 0;
+        }
+        
         body {
             background-color: #94B9C9;
             font-size: large;
@@ -191,6 +196,7 @@
             background-color: #5F849E;
             width: 100%;
             padding: 0;
+            margin-top: 10px;
         }
         
         .topnav a {
@@ -307,6 +313,22 @@
         .slider.round:before {
             border-radius: 50%;
         }
+        
+        .footer {
+            width: 100%;
+            margin: 0 auto;
+            padding: 5px;
+            position: fixed;
+            bottom: 0;
+            text-align: center;
+            font-size: 1.2em;
+            color: white;
+            background-color: #5F849E
+        }
+        
+        .footer a {
+            color: white;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css?family=IM+Fell+English+SC|Rokkitt" rel="stylesheet">
 </head>
@@ -333,6 +355,9 @@
             <div id='notelist'></div>
         </div>
     </div>
+    <footer class='footer'>
+        <p>"NewSNippets" is an exercise in Express, MongoDB, Axios, and Cheerio. &copy; 2019 <a href='https://desmondmullen.com' target='_blank'>desmondmullen.com</a> &bull; <a href='https://github.com/desmondmullen/newsnippets' target='_blank'>GitHub Repository</a></p>
+    </footer>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
     <script src='app.js'></script>
 </body>
