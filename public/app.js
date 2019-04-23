@@ -3,28 +3,22 @@ function displayArticles(saved) {
     $('#notelist').empty();
     $('#articles').empty();
     let isSaved;
-    let isNotSaved;
     let theUrl = '/articles';
     if (saved) { theUrl = '/articles/saved' };
+    if (1 === 2) { theUrl = '/find/' + 'Sri' };
     $.getJSON(theUrl, data => {
         for (let i = 0; i < data.length; i++) {
             if (data[i].saved) {
                 isSaved = `checked='checked'`;
-                isNotSaved = ``;
             } else {
                 isSaved = ``;
-                isNotSaved = `checked='checked'`;
             }
-            let theSavedToggle = `Save Article:
-        <label class='container'>On
-            <input data-id='${data[i]._id}' id='saveon' type='radio' ${isSaved} name='savearticle${data[i]._id}' class='saveon${data[i]._id}'>
-            <span class='checkmark'></span>
-        </label>
-        <label class='container'>Off
-            <input data-id='${data[i]._id}' id='saveoff' type='radio' ${isNotSaved} name='savearticle${data[i]._id}' class='saveoff${data[i]._id}'>
-            <span class='checkmark'></span>
-        </label>`;
-            $('#articles').append(`<p><span class='article-title'>${data[i].title}</span><br />${data[i].description}<br /><a href='${data[i].link}' target='_blank'>${data[i].link}</a><br />${theSavedToggle}<button data-id='${data[i]._id}' data-title='${data[i].title}' id='displaynotes'>See/Add Note(s)</button></p><hr/>`);
+            let theSavedToggle = `<section class='save-switch'>Save Article: 
+        OFF <label class='switch'>On
+            <input data-id='${data[i]._id}' type='checkbox' ${isSaved} name='savearticle${data[i]._id}' class='saveart saveart${data[i]._id}'>
+            <span class='slider round'></span>
+        </label> ON</section>`;
+            $('#articles').append(`<div class='article-display'><span class='article-title'>${data[i].title}</span><br />${data[i].description}<br /><a href='${data[i].link}' target='_blank'>${data[i].link}</a><div class='article-bar'>${theSavedToggle}<button data-id='${data[i]._id}' data-title='${data[i].title}' id='displaynotes'>See/Add Note(s)</button></div></div><br />`);
         }
     });
 };
@@ -62,6 +56,31 @@ $(document).on('click', '#allarticles', function() {
 
 $(document).on('click', '#savedarticles', function() {
     displayArticles('saved');
+});
+
+$(document).on('click', '#search', function() {
+    $.ajax({
+            method: 'GET',
+            url: '/find/' + $('#searchinput').val()
+        })
+        .then(data => {
+            $('#noteentry').empty();
+            $('#notelist').empty();
+            $('#articles').empty();
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].saved) {
+                    isSaved = `checked='checked'`;
+                } else {
+                    isSaved = ``;
+                }
+                let theSavedToggle = `<section class='save-switch'>Save Article: 
+        OFF <label class='switch'>On
+            <input data-id='${data[i]._id}' type='checkbox' ${isSaved} name='savearticle${data[i]._id}' class='saveart saveart${data[i]._id}'>
+            <span class='slider round'></span>
+        </label> ON</section>`;
+                $('#articles').append(`<div class='article-display'><span class='article-title'>${data[i].title}</span><br />${data[i].description}<br /><a href='${data[i].link}' target='_blank'>${data[i].link}</a><div class='article-bar'>${theSavedToggle}<button data-id='${data[i]._id}' data-title='${data[i].title}' id='displaynotes'>See/Add Note(s)</button></div></div><br />`);
+            }
+        });
 });
 
 $(document).on('click', '#displaynotes', function() {
@@ -108,33 +127,35 @@ $(document).on('click', '#savenote', function() {
     }
 });
 
-$(document).on('click', '#saveon', function() {
+$(document).on('click', '.saveart', function() {
     const thisId = $(this).attr('data-id');
+    const trueOrFalse = $(this)[0].checked
     $.ajax({
             method: 'POST',
             url: '/articles/' + thisId,
             data: {
-                saved: true
+                saved: trueOrFalse
             }
         })
         .then(data => {
+            $(this)[0].checked = !$(this)[0].checked;
             displayArticles();
         });
 });
 
-$(document).on('click', '#saveoff', function() {
-    const thisId = $(this).attr('data-id');
-    $.ajax({
-            method: 'POST',
-            url: '/articles/' + thisId,
-            data: {
-                saved: false
-            }
-        })
-        .then(data => {
-            displayArticles();
-        });
-});
+// $(document).on('click', '#saveoff', function() {
+//     const thisId = $(this).attr('data-id');
+//     $.ajax({
+//             method: 'POST',
+//             url: '/articles/' + thisId,
+//             data: {
+//                 saved: false
+//             }
+//         })
+//         .then(data => {
+//             displayArticles();
+//         });
+// });
 
 $(document).on('click', '.delete', function() {
     let selected = $(this).parent();

@@ -71,7 +71,7 @@ app.get('/articles/saved', (req, res) => {
         });
 });
 
-app.get('/articles/:id', (req, res) => {
+app.get('/articles/:id', (req, res) => { // finds notes by article id
     db.Note.find({ article: req.params.id }).sort({ modified: -1 })
         .populate('article')
         .then(dbNote => {
@@ -82,7 +82,18 @@ app.get('/articles/:id', (req, res) => {
         });
 });
 
-app.get('/notes/:id', (req, res) => {
+app.get('/find/:term', (req, res) => { // finds a note by note id
+    //db.stores.find( { $text: { $search: "java coffee shop" } } )
+    db.Article.find({ title: { $regex: `.*${req.params.term}.*` } })
+        .then(dbArticle => {
+            res.json(dbArticle);
+        })
+        .catch(err => {
+            res.json(err);
+        });
+});
+
+app.get('/notes/:id', (req, res) => { // finds a note by note id
     db.Note.find({ _id: req.params.id })
         .populate('article')
         .then(dbNote => {
