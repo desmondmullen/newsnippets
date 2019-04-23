@@ -38,7 +38,6 @@ app.get("/scrape", (req, res) => {
                         db.Article.create(result)
                             .then(dbArticle => {
                                 theArticles.push(dbArticle);
-                                console.log('created');
                             })
                             .catch(err => {
                                 console.log(err);
@@ -46,8 +45,7 @@ app.get("/scrape", (req, res) => {
                     }
                 })
         });
-        setTimeout(function () {
-            console.log(theArticles);
+        setTimeout(function() {
             res.json(theArticles);
         }, 3000);
 
@@ -58,7 +56,6 @@ app.get("/scrape", (req, res) => {
 app.get("/articles", (req, res) => {
     db.Article.find({})
         .then(dbArticle => {
-            console.log(dbArticle);
             res.json(dbArticle);
         })
         .catch(err => {
@@ -68,10 +65,9 @@ app.get("/articles", (req, res) => {
 
 app.get("/articles/saved", (req, res) => {
     db.Article.find({
-        saved: true
-    })
+            saved: true
+        })
         .then(dbArticle => {
-            console.log(dbArticle);
             res.json(dbArticle);
         })
         .catch(err => {
@@ -81,9 +77,20 @@ app.get("/articles/saved", (req, res) => {
 
 app.get("/articles/:id", (req, res) => {
     db.Note.find({ article: req.params.id })
-        // .populate("article")
+        .populate("article")
         .then(dbNote => {
-            console.log(dbNote);
+            console.log('in get articles ' + dbNote);
+            res.json(dbNote);
+        })
+        .catch(err => {
+            res.json(err);
+        });
+});
+
+app.get("/notes/:id", (req, res) => {
+    db.Note.find({ _id: req.params.id })
+        .populate("article")
+        .then(dbNote => {
             res.json(dbNote);
         })
         .catch(err => {
@@ -92,46 +99,89 @@ app.get("/articles/:id", (req, res) => {
 });
 
 app.post("/articles/:id", (req, res) => {
-    console.log(req.body.saved);
     if (req.body.saved) {
-        console.log('req.body.saved is true');
         db.Article.findOneAndUpdate({ _id: req.params.id }, { saved: true }, { new: true })
             .then(dbArticle => {
                 console.log(dbArticle);
+                // need to update button to 'Saved'
             })
-    } else {
+    } else { // save note
+        console.log('saving note');
         req.body.article = req.params.id; //add the id of the article into the body
         db.Note.create(req.body)
             .then(dbNote => {
-                return db.Note.find({ article: req.body.article }, { new: true });
+                db.Note.find({ article: req.body.article }, { new: true })
+                    .then(notesList => {
+                        res.json(notesList);
+                    })
             })
     }
 });
-// app.post("/articles/:id", (req, res) => {
-//     console.log(req.body.saved);
-//     if (req.body.saved) {
-//         console.log('req.body.saved is true');
-//         db.Article.findOneAndUpdate({ _id: req.params.id }, { saved: true }, { new: true })
-//             .then(dbArticle => {
-//                 console.log(dbArticle);
-//             })
-//     } else {
-//         req.body.article = req.params.id; //add the id of the article into the body
-//         db.Note.create(req.body)
-//             .then(dbNote => {
-//                 // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
-//                 // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
-//                 // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
-//                 return db.Article.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true });
-//             })
-//             .then(dbArticle => {
-//                 res.json(dbArticle);
-//             })
-//             .catch(err => {
-//                 res.json(err);
-//             });
-//     }
-// });
+// notes
+app.get("/find/:id", (req, res) => {
+    // When searching by an id, the id needs to be passed in
+    // as (mongojs.ObjectId(IdYouWantToFind))
+
+    // Find just one result in the notes collection
+    db.notes.findOne({
+            // Using the id in the url
+            _id: mongojs.ObjectId(req.params.id)
+        },
+        (error, found) => {
+            // log any errors
+            if (error) {
+                console.log(error);
+                res.send(error);
+            } else {
+                // Otherwise, send the note to the browser
+                // This will fire off the success function of the ajax request
+                res.send(found);
+            }
+        }
+    );
+});
+
+app.post("/update/:id", (req, res) => {
+    db.Note.update({
+            _id: req.params.id
+        }, {
+            $set: {
+                title: req.body.title,
+                body: req.body.body,
+                modified: Date.now()
+            }
+        },
+        (error, edited) => {
+            // Log any errors from mongojs
+            if (error) {
+                console.log(error);
+                res.send(error);
+            } else {
+                res.send(edited);
+            }
+        }
+    );
+});
+
+// Delete One from the DB
+app.get("/delete/:id", (req, res) => {
+    // Remove a note using the objectID
+    db.Note.remove({
+            _id: req.params.id
+        },
+        (error, removed) => {
+            // Log any errors from mongojs
+            if (error) {
+                console.log(error);
+                res.send(error);
+            } else {
+                // Otherwise, send the mongojs response to the browser
+                // This will fire off the success function of the ajax request
+                res.send(removed);
+            }
+        }
+    );
+});
 
 app.listen(PORT, () => {
     console.log(`App running on port ${PORT}!`);

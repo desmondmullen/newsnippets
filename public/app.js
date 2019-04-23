@@ -1,17 +1,20 @@
 function displayArticles() {
+    $('#noteentry').empty();
+    $('#notelist').empty();
+    $('#articles').empty();
     $.getJSON('/articles', data => {
         for (let i = 0; i < data.length; i++) {
             if (data[i].saved) {
-                $('#articles').append(`<p>${data[i].title} <button data-id='${data[i]._id}' id='savearticle'>Saved</button><button data-id='${data[i]._id}' id='addnote'>See/Add Note(s)</button><br /><a href='${data[i].link}' target='_blank'>${data[i].link}</a><br />${data[i].description}</p>`);
+                $('#articles').append(`<p>${data[i].title} <button data-id='${data[i]._id}' id='savearticle'>Saved</button><button data-id='${data[i]._id}' data-title='${data[i].title}' id='displaynotes'>See/Add Note(s)</button><br /><a href='${data[i].link}' target='_blank'>${data[i].link}</a><br />${data[i].description}</p>`);
             } else {
-                $('#articles').append(`<p>${data[i].title} <button data-id='${data[i]._id}' id='savearticle'>Save Article</button><button data-id='${data[i]._id}' id='addnote'>See/Add Note(s)</button><br /><a href='${data[i].link}' target='_blank'>${data[i].link}</a><br />${data[i].description}</p>`);
+                $('#articles').append(`<p>${data[i].title} <button data-id='${data[i]._id}' id='savearticle'>Save Article</button><button data-id='${data[i]._id}' data-title='${data[i].title}' id='displaynotes'>See/Add Note(s)</button><br /><a href='${data[i].link}' target='_blank'>${data[i].link}</a><br />${data[i].description}</p>`);
             }
-            // $('#articles').append(`<p>${data[i].title} <button data-id='${data[i]._id}' id='savearticle'>Save Article</button><button data-id='${data[i]._id}' id='addnote'>See/Add Note(s)</button><br /><a href='${data[i].link}' target='_blank'>${data[i].link}</a><br />${data[i].description}</p>`);
         }
     });
 };
 
 $(document).on('click', '#scrapearticles', function() {
+    $('#noteentry').empty();
     $('#notelist').empty();
     let stillFetching = true;
     document.getElementById('articles').classList.add('fetching');
@@ -31,7 +34,6 @@ $(document).on('click', '#scrapearticles', function() {
         .then(function(data) {
             stillFetching = false;
             console.log('scrapearticles');
-            $('#articles').empty();
             document.getElementById('articles').classList.remove('fetching');
             displayArticles();
         });
@@ -44,6 +46,7 @@ $(document).on('click', '#allarticles', function() {
 });
 
 $(document).on('click', '#savedarticles', function() {
+    $('#noteentry').empty();
     $('#notelist').empty();
     $('#articles').empty();
     $.ajax({
@@ -52,40 +55,43 @@ $(document).on('click', '#savedarticles', function() {
         })
         .then(data => {
             for (let i = 0; i < data.length; i++) {
-                $('#articles').append(`<p>${data[i].title} <button data-id='${data[i]._id}' id='savearticle'>Saved</button><button data-id='${data[i]._id}' id='addnote'>See/Add Note(s)</button><br /><a href='${data[i].link}' target='_blank'>${data[i].link}</a><br />${data[i].description}</p>`);
+                $('#articles').append(`<p>${data[i].title} <button data-id='${data[i]._id}' id='savearticle'>Saved</button><button data-id='${data[i]._id}' data-title='${data[i].title}' id='displaynotes'>See/Add Note(s)</button><br /><a href='${data[i].link}' target='_blank'>${data[i].link}</a><br />${data[i].description}</p>`);
             }
         });
 });
 
-$(document).on('click', '#addnote', function() {
+$(document).on('click', '#displaynotes', function() {
+    let thisId = $(this).attr('data-id');
+    let thisTitle = $(this).attr('data-title');
+    displayNotes(thisId, thisTitle);
+});
+
+function displayNotes(thisId, thisTitle) {
+    $('#noteentry').empty();
     $('#notelist').empty();
-    const thisId = $(this).attr('data-id');
+    $('#titleinput').val('');
+    $('#bodyinput').val('');
+    $('#noteentry').append(`<h2>Notes for: <em>${thisTitle}</em></h2>`);
+    $('#noteentry').append(`<input id='titleinput' name='title' >`);
+    $('#noteentry').append(`<textarea id='bodyinput' name='body'></textarea>`);
+    $('#noteentry').append(`<button data-id='${thisId}' data-title='${thisTitle}' id='savenote'>Save Note</button>`);
+    console.log('in display notes before ajax ' + thisId);
     $.ajax({
             method: 'GET',
             url: '/articles/' + thisId
         })
         .then(data => {
-            console.log(thisId);
-            console.log(data.note);
-            $('#noteentry').append(`<h2>Notes for: <em>${data.title}${thisId}</em></h2>`);
-            $('#noteentry').append(`<input id='titleinput' name='title' >`);
-            $('#noteentry').append(`<textarea id='bodyinput' name='body'></textarea>`);
-            $('#noteentry').append(`<button data-id='${thisId}' id='savenote'>Save Note</button>`);
-            // if (data.note) {
-            //     $('#titleinput').val(data.note.title);
-            //     $('#bodyinput').val(data.note.body);
-            // }
+            console.log('in display notes ' + data);
             for (let i = 0; i < data.length; i++) {
-                // ...populate #results with a p-tag that includes the note's title and object id
                 $("#notelist").prepend("<p class='data-entry' data-id=" + data[i]._id + "><span class='dataTitle' data-id=" +
                     data[i]._id + ">" + data[i].title + "</span><span class=delete>X</span></p>");
             }
-
         });
-});
+};
 
 $(document).on('click', '#savenote', function() {
     const thisId = $(this).attr('data-id');
+    const thisTitle = $(this).attr('data-title');
     $.ajax({
             method: 'POST',
             url: '/articles/' + thisId,
@@ -95,10 +101,8 @@ $(document).on('click', '#savenote', function() {
             }
         })
         .then(data => {
-            $('#notelist').empty();
+            displayNotes(thisId, thisTitle);
         });
-    $('#titleinput').val('');
-    $('#bodyinput').val('');
 });
 
 $(document).on('click', '#savearticle', function() {
@@ -112,6 +116,61 @@ $(document).on('click', '#savearticle', function() {
             }
         })
         .then(data => {
-            console.log(data);
+            displayArticles();
         });
+});
+
+$(document).on("click", ".delete", function() {
+    let selected = $(this).parent();
+    $.ajax({
+        type: "GET",
+        url: "/delete/" + selected.attr("data-id"),
+        success: (response) => {
+            selected.remove();
+            $("#note").val("");
+            $("#title").val("");
+            $("#action-button").html("<button id='make-new'>Submit</button>");
+        }
+    });
+});
+
+$(document).on("click", ".dataTitle", function() {
+    const thisId = $(this).attr("data-id");
+    $.ajax({
+        type: "GET",
+        url: "/notes/" + thisId,
+        success: (data) => {
+            $('#noteentry').html(`<h2>Notes for: <em>${data[0].article.title}</em></h2>`);
+            $('#noteentry').append(`<input id='titleinput' name='title' >`);
+            $('#titleinput').val(data[0].title);
+            $('#noteentry').append(`<textarea id='bodyinput' name='body'>${data[0].body}</textarea>`);
+            $('#noteentry').append(`<button data-id='${thisId}' data-articleId='${data[0].article._id}' data-title='${data[0].article.title}' id='updatenote'>Update Note</button>`);
+        }
+    });
+});
+
+$(document).on("click", "#updatenote", function() {
+    let thisId = $(this).attr("data-id")
+    let thisTitle = $(this).attr("data-title")
+    let thisArticleId = $(this).attr("data-articleId")
+    $.ajax({
+        type: "POST",
+        url: "/update/" + thisId,
+        dataType: "json",
+        data: {
+            title: $("#titleinput").val(),
+            body: $("#bodyinput").val()
+        },
+        // On successful call
+        success: (data) => {
+            displayNotes(thisArticleId, thisTitle);
+            // Clear the inputs
+            // $("#note").val("");
+            // $("#title").val("");
+            // // Revert action button to submit
+            // $("#action-button").html("<button id='make-new'>Submit</button>");
+            // // Grab the results from the db again, to populate the DOM
+            // getResults();
+        }
+    });
 });
